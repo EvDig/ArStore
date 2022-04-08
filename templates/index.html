@@ -1,28 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Записи в блоге</h1>
+<h1>Список товаров</h1>
 {% if current_user.is_authenticated %}
-    <a href="news" class="btn btn-secondary">Добавить новость</a>
+    <a href="products" class="btn btn-secondary">Добавить товар</a>
 {% endif %}
-{% for item in news%}
+{% for item in products%}
 <div class="col-md6 border rounded">
     <h2>{{item.title}}</h2>
-    {% if current_user.is_authenticated and current_user == item.user %}
+    {% if current_user.is_authenticated %}
     <div>
-        <a href="/news/{{ item.id }}" class="btn btn-warning">
+        <a href="/products/{{ item.id }}" class="btn btn-warning">
             Изменить
         </a>
-        <a href="/news_delete/{{ item.id }}" class="btn btn-danger">
+        <a href="/products_delete/{{ item.id }}" class="btn btn-danger">
             Удалить
         </a>
     </div>
     {% endif %}
     <div>
         {{item.content}}
-    </div>
-    <div>
-        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
     </div>
 </div>
 {% endfor %}

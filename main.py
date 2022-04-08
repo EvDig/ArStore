@@ -6,11 +6,11 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
-from forms.news import NewsForm
+from forms.products import ProductForm
 from flask import jsonify
 
 from data import db_session
-from data.news import News
+from data.products import Products
 from data.users import User
 from forms.user import RegisterForm
 from flask import make_response
@@ -40,12 +40,8 @@ def load_user(user_id):
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-         news = db_sess.query(News).filter(
-            (News.user == current_user) | (News.is_private != True))
-    else:
-        news = db_sess.query(News).filter(News.is_private != True)
-    return render_template("index.html", news=news)
+    products = db_sess.query(Products)
+    return render_template("index.html", products=products)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -63,67 +59,56 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/news',  methods=['GET', 'POST'])
+@app.route('/products',  methods=['GET', 'POST'])
 @login_required
-def add_news():
-    form = NewsForm()
+def add_products():
+    form = ProductForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = News()
-        news.title = form.title.data
-        news.content = form.content.data
-        news.is_private = form.is_private.data
-        current_user.news.append(news)
-        db_sess.merge(current_user)
+        products = Products()
+        products.title = form.title.data
+        products.content = form.content.data
         db_sess.commit()
         return redirect('/')
-    return render_template('news.html', title='Добавление новости',
+    return render_template('products.html', title='Добавление продукта',
                            form=form)
 
 
-@app.route('/news/<int:id>', methods=['GET', 'POST'])
+@app.route('/products/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit_news(id):
-    form = NewsForm()
+def edit_products(id):
+    form = ProductForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        news = db_sess.query(News).filter(News.id == id,
-                                          News.user == current_user
-                                          ).first()
-        if news:
-            form.title.data = news.title
-            form.content.data = news.content
-            form.is_private.data = news.is_private
+        products = db_sess.query(Products).filter(Products.id == id).first()
+        if products:
+            form.title.data = products.title
+            form.content.data = products.content
         else:
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = db_sess.query(News).filter(News.id == id,
-                                          News.user == current_user
-                                          ).first()
-        if news:
-            news.title = form.title.data
-            news.content = form.content.data
-            news.is_private = form.is_private.data
+        products = db_sess.query(Products).filter(Products.id == id).first()
+        if products:
+            products.title = form.title.data
+            products.content = form.content.data
             db_sess.commit()
             return redirect('/')
         else:
             abort(404)
-    return render_template('news.html',
-                           title='Редактирование новости',
+    return render_template('products.html',
+                           title='Редактирование информации о товаре',
                            form=form
                            )
 
 
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/products_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
+def products_delete(id):
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.id == id,
-                                      News.user == current_user
-                                      ).first()
-    if news:
-        db_sess.delete(news)
+    products = db_sess.query(Products).filter(Products.id == id).first()
+    if products:
+        db_sess.delete(products)
         db_sess.commit()
     else:
         abort(404)
