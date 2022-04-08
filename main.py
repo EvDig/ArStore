@@ -68,6 +68,7 @@ def add_products():
         products = Products()
         products.title = form.title.data
         products.content = form.content.data
+        db_sess.add(products)
         db_sess.commit()
         return redirect('/')
     return render_template('products.html', title='Добавление продукта',
