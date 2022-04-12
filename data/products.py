@@ -11,3 +11,4 @@ class Products(SqlAlchemyBase):
                            primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    src = sqlalchemy.Column(sqlalchemy.String, nullable=True)

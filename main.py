@@ -7,7 +7,7 @@ from flask_wtf import FlaskForm
 from wtforms import EmailField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 from forms.products import ProductForm
-from flask import jsonify
+from flask import jsonify, url_for
 
 from data import db_session
 from data.products import Products

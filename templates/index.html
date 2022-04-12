@@ -7,7 +7,8 @@
 {% endif %}
 {% for item in products%}
 <div class="col-md6 border rounded">
-    <h2>{{item.title}}</h2>
+    <img src={{item.src}}/>
+    <h3>{{item.title}}</h3>
     {% if current_user.is_authenticated %}
     <div>
         <a href="/products/{{ item.id }}" class="btn btn-warning">
