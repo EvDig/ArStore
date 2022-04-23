@@ -20,11 +20,18 @@
 </header>
 <nav>
     {% if current_user.is_authenticated %}
-    <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+    <a class="btn btn-danger " href="/logout">Выйти</a>
+    <a class="btn btn-primary " href="/register" style="margin: 15px 50px 0px 0px;">Зарегистрировать нового пользователя</a>
     {% else %}
     <p>
-        <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-        <a class="btn btn-success" href="/login">Войти</a>
+        <a class="btn btn-success" href="/login" style="margin: 15px 0px 0px 20px; width: 200px;">Войти</a>
+        <div align="right">
+        <a class="btn btn-secondary " href="/info">Информация</a>
+        </div>
+    <br>
+        <div align="right">
+        <a class="btn btn-danger " href="/job">Подать заявку на работу</a>
+        </div>
     </p>
 {% endif %}
 </nav>
