@@ -11,8 +11,10 @@ from flask import jsonify, url_for
 
 from data import db_session
 from data.products import Products
+from data.applications import Application
 from data.users import User
-from forms.user import RegisterForm
+from forms.users import UserForm
+from forms.application import RegisterForm
 from flask import make_response
 
 app = Flask(__name__)
@@ -42,6 +44,13 @@ def index():
     db_sess = db_session.create_session()
     products = db_sess.query(Products)
     return render_template("index.html", products=products)
+
+
+@app.route('/info')
+def info():
+    db_sess = db_session.create_session()
+    info = db_sess.query(User)
+    return render_template("info.html", info=info)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -116,17 +125,18 @@ def products_delete(id):
     return redirect('/')
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def reqister():
-    form = RegisterForm()
+@app.route('/workers', methods=['GET', 'POST'])
+@login_required
+def worker_add():
+    form = UserForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('workers.html', title='Регистрация работника',
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+            return render_template('workers.html', title='Регистрация работника',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
@@ -137,8 +147,26 @@ def reqister():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+        return redirect('/')
+    return render_template('workers.html', title='Регистрация работника', form=form)
+
+
+@app.route('/application_send', methods=['GET', 'POST'])
+def application_send():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        application = Application(
+            name=form.name.data,
+            about=form.about.data,
+            email=form.email.data,
+            phone_num=form.phone_num.data
+
+        )
+        db_sess.add(application)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('application_send.html', title='Отправка заявки', form=form)
 
 
 @app.route('/logout')
