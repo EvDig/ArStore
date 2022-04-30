@@ -77,6 +77,8 @@ def add_products():
         products = Products()
         products.title = form.title.data
         products.content = form.content.data
+        products.src = form.src.data
+        products.price = form.price.data
         db_sess.add(products)
         db_sess.commit()
         return redirect('/')
@@ -94,6 +96,8 @@ def edit_products(id):
         if products:
             form.title.data = products.title
             form.content.data = products.content
+            form.src.data = products.src
+            form.price.data = products.price
         else:
             abort(404)
     if form.validate_on_submit():
@@ -102,6 +106,8 @@ def edit_products(id):
         if products:
             products.title = form.title.data
             products.content = form.content.data
+            products.src = form.src.data
+            products.price = form.price.data
             db_sess.commit()
             return redirect('/')
         else:
